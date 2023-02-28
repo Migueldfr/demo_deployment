@@ -13,7 +13,7 @@ app.config['DEBUG'] = True
 
 @app.route("/", methods=['GET'])
 def hello():
-    return "Bienvenido a mi API del modelo advertising"
+    return "Bienvenido a la API de Miguel del modelo advertising"
 
 # 1. Wndpoint que devuelva la predicción de los nuevos datos enviados mediante argumentos en la llamada
 @app.route('/v2/predict', methods=['GET'])
