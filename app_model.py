@@ -87,7 +87,7 @@ def retrain():
             with open('data/advertising_model', 'wb') as archivo_salida:
                 pickle.dump(model, archivo_salida)
 
-        return f"DONE!!"
+        return f"The model has beend re-trained, it is now ready to break the rules 🤟🏽"
     
         #y_pred = model.predict(X)
         #y_pred_list = y_pred.tolist()
