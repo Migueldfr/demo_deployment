@@ -32,7 +32,7 @@ def predict():
 
 # 2. Un endpoint para almacenar nuevos registros en la base de datos que deberá estar previamente creada.
 
-@app.route('/v2/ingest_data', methods = ['POST'])
+@app.route('/v2/ingest_data', methods = ['POST','GET'])
 def ingest_data():
    
         if request.method == 'POST':
