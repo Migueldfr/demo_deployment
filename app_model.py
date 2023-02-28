@@ -35,19 +35,20 @@ def predict():
 @app.route('/v2/ingest_data', methods = ['POST'])
 def ingest_data():
    
-   if request.method == 'POST': 
-        TV = float(request.args['TV'])
-        radio = float(request.args['radio'])
-        newspaper = float(request.args['newspaper'])
-        sales = int(request.args['sales'])
-    
-        connection = sqlite3.connect('data/advertising.db')
-        cursor = connection.cursor()
-        query = "INSERT INTO campañas (TV, radio, newspaper, sales) VALUES (?, ?, ?, ?)"
-        result = cursor.execute(query, (TV,radio,newspaper,sales)).fetchall()
-        connection.commit()
-        connection.close()
-        return f"DONE!!" 
+        request.method == 'POST'
+        if request.method == 'POST':
+            TV = float(request.args['TV'])
+            radio = float(request.args['radio'])
+            newspaper = float(request.args['newspaper'])
+            sales = int(request.args['sales'])
+
+            connection = sqlite3.connect('data/advertising.db')
+            cursor = connection.cursor()
+            query = "INSERT INTO campañas (TV, radio, newspaper, sales) VALUES (?, ?, ?, ?)"
+            result = cursor.execute(query, (TV,radio,newspaper,sales)).fetchall()
+            connection.commit()
+            connection.close()
+            return f"DONE!!" 
 
 # 3. Posibilidad de reentrenar de nuevo el modelo con los posibles nuevos registros que se recojan.
 
@@ -55,23 +56,24 @@ def ingest_data():
 
 def retrain():
 
-    if request.method == 'POST':
-        with open('data/advertising_model', 'rb') as f:
-            model = pickle.load(f)
+        request.method == 'POST'
+        if request.method == 'POST':
+            with open('data/advertising_model', 'rb') as f:
+                model = pickle.load(f)
 
-        connection = sqlite3.connect('data/advertising.db')
-        df = pd.read_sql_query("SELECT TV,radio,newspaper,sales FROM campañas", connection)
-        connection.close()
+            connection = sqlite3.connect('data/advertising.db')
+            df = pd.read_sql_query("SELECT TV,radio,newspaper,sales FROM campañas", connection)
+            connection.close()
 
-        X = df.drop('sales', axis=1)
-        y = df['sales']
+            X = df.drop('sales', axis=1)
+            y = df['sales']
 
-        model.fit(X,y)
+            model.fit(X,y)
 
-        with open('data/advertising_model', 'wb') as archivo_salida:
-            pickle.dump(model, archivo_salida)
+            with open('data/advertising_model', 'wb') as archivo_salida:
+                pickle.dump(model, archivo_salida)
 
-        return f'DONE!!'
+            return f'DONE!!'
     
         #y_pred = model.predict(X)
         #y_pred_list = y_pred.tolist()
