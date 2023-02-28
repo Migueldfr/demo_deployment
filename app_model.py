@@ -48,7 +48,7 @@ def ingest_data():
             result = cursor.execute(query, (TV,radio,newspaper,sales)).fetchall()
             connection.commit()
             connection.close()
-            return f"DONE!!" 
+        return f"DONE!!" 
 
 # 3. Posibilidad de reentrenar de nuevo el modelo con los posibles nuevos registros que se recojan.
 
@@ -56,7 +56,7 @@ def ingest_data():
 
 def retrain():
 
-        request.method == 'POST'
+        
         if request.method == 'POST':
             with open('data/advertising_model', 'rb') as f:
                 model = pickle.load(f)
@@ -73,7 +73,7 @@ def retrain():
             with open('data/advertising_model', 'wb') as archivo_salida:
                 pickle.dump(model, archivo_salida)
 
-            return f'DONE!!'
+        return f"DONE!!"
     
         #y_pred = model.predict(X)
         #y_pred_list = y_pred.tolist()
