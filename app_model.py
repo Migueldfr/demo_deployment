@@ -34,19 +34,20 @@ def predict():
 
 @app.route('/v2/ingest_data', methods = ['POST'])
 def ingest_data():
-
-    TV = float(request.args['TV'])
-    radio = float(request.args['radio'])
-    newspaper = float(request.args['newspaper'])
-    sales = int(request.args['sales'])
-
-    connection = sqlite3.connect('data/advertising.db')
-    cursor = connection.cursor()
-    query = "INSERT INTO campañas (TV, radio, newspaper, sales) VALUES (?, ?, ?, ?)"
-    result = cursor.execute(query, (TV,radio,newspaper,sales)).fetchall()
-    connection.commit()
-    connection.close()
-    return f"DONE!!" 
+   
+   if request.method == 'POST': 
+        TV = float(request.args['TV'])
+        radio = float(request.args['radio'])
+        newspaper = float(request.args['newspaper'])
+        sales = int(request.args['sales'])
+    
+        connection = sqlite3.connect('data/advertising.db')
+        cursor = connection.cursor()
+        query = "INSERT INTO campañas (TV, radio, newspaper, sales) VALUES (?, ?, ?, ?)"
+        result = cursor.execute(query, (TV,radio,newspaper,sales)).fetchall()
+        connection.commit()
+        connection.close()
+        return f"DONE!!" 
 
 # 3. Posibilidad de reentrenar de nuevo el modelo con los posibles nuevos registros que se recojan.
 
