@@ -4,6 +4,7 @@ import pickle
 from sklearn.model_selection import cross_val_score
 import pandas as pd
 import sqlite3
+from sklearn.metrics import mean_squared_error
 
 os.chdir(os.path.dirname(__file__))
 
@@ -17,13 +18,11 @@ def hello():
 # 1. Wndpoint que devuelva la predicción de los nuevos datos enviados mediante argumentos en la llamada
 @app.route('/v2/predict', methods=['GET'])
 def predict():
-    x = os.getcwd()
-    dir = x.split('/')
-    model = pickle.load(open('/'.join(dir[:-1]) + '/data/advertising_model', 'rb'))
+    model = pickle.load(open('data/advertising_model','rb'))
 
-    tv = request.args.get('tv', None)
-    radio = request.args.get('radio', None)
-    newspaper = request.args.get('newspaper', None)
+    tv = float(request.args.get('tv', None))
+    radio = float(request.args.get('radio', None))
+    newspaper = float(request.args.get('newspaper', None))
 
     if tv is None or radio is None or newspaper is None:
         return "Missing args, the input values are needed to predict"
@@ -41,12 +40,45 @@ def ingest_data():
     newspaper = float(request.args['newspaper'])
     sales = int(request.args['sales'])
 
-    connection = sqlite3.connect('advertising.db')
+    connection = sqlite3.connect('data/advertising.db')
     cursor = connection.cursor()
-    result = cursor.execute("INSERT INTO campaña VALUES(TV,radio,newspaper,sales) (?,?,?,?)")
+    query = "INSERT INTO campañas (TV, radio, newspaper, sales) VALUES (?, ?, ?, ?)"
+    result = cursor.execute(query, (TV,radio,newspaper,sales)).fetchall()
     connection.commit()
-    return result & f"DONE!!" 
+    connection.close()
+    return f"DONE!!" 
 
+# 3. Posibilidad de reentrenar de nuevo el modelo con los posibles nuevos registros que se recojan.
 
+@app.route('/v2/retrain', methods = ['POST','GET'])
 
-#app.run()
+def retrain():
+
+    if request.method == 'POST':
+        with open('data/advertising_model', 'rb') as f:
+            model = pickle.load(f)
+
+        connection = sqlite3.connect('data/advertising.db')
+        df = pd.read_sql_query("SELECT TV,radio,newspaper,sales FROM campañas", connection)
+        connection.close()
+
+        X = df.drop('sales', axis=1)
+        y = df['sales']
+
+        model.fit(X,y)
+
+        with open('data/advertising_model', 'wb') as archivo_salida:
+            pickle.dump(model, archivo_salida)
+
+        return f'DONE!!'
+    
+        #y_pred = model.predict(X)
+        #y_pred_list = y_pred.tolist()
+#
+        #result = []    
+        #for n in range(len(y_pred_list)):
+        #    result.append([n, y_pred_list[n]])
+#
+        #return jsonify({"predictions": result})
+
+app.run()    
