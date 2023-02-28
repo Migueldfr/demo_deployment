@@ -35,7 +35,6 @@ def predict():
 @app.route('/v2/ingest_data', methods = ['POST'])
 def ingest_data():
    
-        request.method == 'POST'
         if request.method == 'POST':
             TV = float(request.args['TV'])
             radio = float(request.args['radio'])
@@ -44,19 +43,34 @@ def ingest_data():
 
             connection = sqlite3.connect('data/advertising.db')
             cursor = connection.cursor()
-            query = "INSERT INTO campañas (TV, radio, newspaper, sales) VALUES (?, ?, ?, ?)"
-            result = cursor.execute(query, (TV,radio,newspaper,sales)).fetchall()
+
+            query1 = "SELECT MAX('index') FROM campañas"
+            max_index = cursor.execute(query1).fetchone()[0]
+            
+            new_index  = 200
+            if max_index is None:
+                 new_index = 200
+            else:
+                 new_index +=1
+
+            connection = sqlite3.connect('data/advertising.db')
+            cursor = connection.cursor()
+            query = "INSERT INTO campañas ( TV, radio, newspaper, sales) VALUES ( ?, ?, ?, ?)"
+            result1 = cursor.execute(query, (TV,radio,newspaper,sales)).fetchall()
+
+            response = "SELECT * FROM campañas ORDER BY 1 LIMIT 5"
+            result2 = cursor.execute(response).fetchall()
             connection.commit()
             connection.close()
-        return f"DONE!!" 
+
+        return jsonify(f"This are the new values you've gotten in on the data", result2 )
 
 # 3. Posibilidad de reentrenar de nuevo el modelo con los posibles nuevos registros que se recojan.
 
 @app.route('/v2/retrain', methods = ['POST','GET'])
 
 def retrain():
-
-        
+  
         if request.method == 'POST':
             with open('data/advertising_model', 'rb') as f:
                 model = pickle.load(f)
@@ -77,11 +91,11 @@ def retrain():
     
         #y_pred = model.predict(X)
         #y_pred_list = y_pred.tolist()
-#
+
         #result = []    
         #for n in range(len(y_pred_list)):
         #    result.append([n, y_pred_list[n]])
-#
+
         #return jsonify({"predictions": result})
 
-#app.run()    
+app.run()    

@@ -1,0 +1,1 @@
+SELECT MAX("index") FROM campañas
