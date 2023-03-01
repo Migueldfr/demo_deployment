@@ -54,7 +54,7 @@ def ingest_data():
             connection.commit()
             connection.close()
 
-        return f"This are the new values you've gotten in on the data :{result2}"
+            return f"This are the new values you've gotten in on the data :{result2}"
 
 # 3. Posibilidad de reentrenar de nuevo el modelo con los posibles nuevos registros que se recojan.
 
