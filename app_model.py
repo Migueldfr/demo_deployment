@@ -59,11 +59,11 @@ def ingest_data():
             result1 = cursor.execute(query, (TV,radio,newspaper,sales)).fetchall()
 
             response = "SELECT * FROM campañas ORDER BY 1 LIMIT 5"
-            result2 = cursor.execute(response).fetchall()
+            result2 = cursor.execute(f"This are the new values you've gotten in on the data", response).fetchall()
             connection.commit()
             connection.close()
 
-        return f"This are the new values you've gotten in on the data" & result2
+        return result2
 
 # 3. Posibilidad de reentrenar de nuevo el modelo con los posibles nuevos registros que se recojan.
 
