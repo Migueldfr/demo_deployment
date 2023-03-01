@@ -44,26 +44,17 @@ def ingest_data():
             connection = sqlite3.connect('data/advertising.db')
             cursor = connection.cursor()
 
-            query1 = "SELECT MAX('index') FROM campañas"
-            max_index = cursor.execute(query1).fetchone()[0]
-            
-            new_index  = 200
-            if max_index is None:
-                 new_index = 200
-            else:
-                 new_index +=1
-
             connection = sqlite3.connect('data/advertising.db')
             cursor = connection.cursor()
             query = "INSERT INTO campañas ( TV, radio, newspaper, sales) VALUES ( ?, ?, ?, ?)"
             result1 = cursor.execute(query, (TV,radio,newspaper,sales)).fetchall()
 
             response = "SELECT * FROM campañas ORDER BY 1 LIMIT 5"
-            result2 = cursor.execute(f"This are the new values you've gotten in on the data", response).fetchall()
+            result2 = cursor.execute(response).fetchall()
             connection.commit()
             connection.close()
 
-        return result2
+        return f"This are the new values you've gotten in on the data :{result2}"
 
 # 3. Posibilidad de reentrenar de nuevo el modelo con los posibles nuevos registros que se recojan.
 
