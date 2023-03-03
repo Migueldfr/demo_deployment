@@ -44,17 +44,26 @@ def ingest_data():
             connection = sqlite3.connect('data/advertising.db')
             cursor = connection.cursor()
 
+            query1 = "SELECT MAX('index') FROM campañas"
+            max_index = cursor.execute(query1).fetchone()[0]
+            
+            new_index  = 200
+            if max_index is None:
+                 new_index = 200
+            else:
+                 new_index +=1
+
             connection = sqlite3.connect('data/advertising.db')
             cursor = connection.cursor()
             query = "INSERT INTO campañas ( TV, radio, newspaper, sales) VALUES ( ?, ?, ?, ?)"
             result1 = cursor.execute(query, (TV,radio,newspaper,sales)).fetchall()
 
-            response = "SELECT * FROM campañas ORDER BY 1 LIMIT 5"
+            response = "SELECT COUNT(tv) FROM campañas "
             result2 = cursor.execute(response).fetchall()
             connection.commit()
             connection.close()
 
-        return "You add already the data to database"
+        return  result2
 
 # 3. Posibilidad de reentrenar de nuevo el modelo con los posibles nuevos registros que se recojan.
 
@@ -78,15 +87,9 @@ def retrain():
             with open('data/advertising_model', 'wb') as archivo_salida:
                 pickle.dump(model, archivo_salida)
 
-        return f"The model has beend re-trained, it is now ready to break the rules 🤟🏽"
-    
-        #y_pred = model.predict(X)
-        #y_pred_list = y_pred.tolist()
+            scores = cross_val_score(model, X,y, cv=10 , scoring = 'neg_mean_absolute_error')
 
-        #result = []    
-        #for n in range(len(y_pred_list)):
-        #    result.append([n, y_pred_list[n]])
+        return f"The model has beend re-trained, it is now ready to break the rules 🤟🏽" + ' The MAE now is: ' + str(round(scores.mean()*(-1),2))
 
-        #return jsonify({"predictions": result})
 
 #app.run()    
