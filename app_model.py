@@ -92,4 +92,4 @@ def retrain():
         return f"The model has beend re-trained, it is now ready to break the rules 🤟🏽" + ' The MAE now is: ' + str(round(scores.mean()*(-1),2))
 
 
-app.run()    
+#app.run()    
