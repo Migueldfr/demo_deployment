@@ -63,7 +63,7 @@ def ingest_data():
             connection.commit()
             connection.close()
 
-        return  result2
+        return  jsonify(result2)
 
 # 3. Posibilidad de reentrenar de nuevo el modelo con los posibles nuevos registros que se recojan.
 
@@ -89,7 +89,7 @@ def retrain():
 
             scores = cross_val_score(model, X,y, cv=10 , scoring = 'neg_mean_absolute_error')
 
-        return f"The model has beend re-trained, it is now ready to break the rules 🤟🏽" + ' The MAE now is: ' + str(round(scores.mean()*(-1),2))
+        return f"The model has beend re-trained, it is now ready to break the rules 🤟🏽" #+ ' The MAE now is: ' + str(round(scores.mean()*(-1),2))
 
 
 #app.run()    
